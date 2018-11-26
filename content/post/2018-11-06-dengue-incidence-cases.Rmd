@@ -1,0 +1,82 @@
+---
+title: Dengue incidence cases in Sri Lanka from 2010 to 2017
+author: Pushpakanthie Wijekoon
+date: '2018-11-06'
+categories:
+  - R
+tags:
+  - plot
+  - R Markdown
+  - regression
+output:
+  html_document:
+    df_print: paged
+---
+
+Dengue is a mosquito-borne viral infection caused by four dengue virus serotypes, and  disease caused mainly by Aedes aegypti and Aedes albopictus mosquitos. The Dengue virus is transmitted to humans through the bites of infected female mosquitoes, and Infected humans are the main carriers. The relevant mosquitos are daytime feeders,with peak biting periods early in the morning and in the evening before dusk.  
+
+Dengue fever is endemic in Sri Lanka, and the Dengue incidence cases usually increases soon after the rainfall which is optimal for mosquito breeding.  The data for this study are obtained from the [Epidemiology Unit, Ministry of Health, Sri Lanka](http://www.epid.gov.lk/web/index.php?option=com_casesanddeaths&Itemid=448&lang=en).  
+
+
+
+```{r echo=FALSE}
+library(gsheet)  
+df=gsheet2tbl('docs.google.com/spreadsheets/d/1-AbkDVMxrkLk7nB02RwVQdOvPjsK4Ld2mX_sfE6KPtU')
+head(df)
+df=df[,1:4]
+
+```
+
+The following interactive plots present the Dengue incidence cases for each district in Sri Lanka from year 2010 to 2017.
+<br>
+
+```{r dengueampa, echo=FALSE, message=FALSE, warning=FALSE}
+suppressMessages(library(dplyr))
+library(plotly)
+month <- c("Jan", "Feb", "Mar", "Apr","May", "Jun", "Jul", "Aug","Sep", "Oct", "Nov", "Dec")
+xform <- list(categoryorder = "array",
+              categoryarray = c("Jan", "Feb", "Mar", "Apr","May", "Jun", "Jul", "Aug","Sep", "Oct", "Nov", "Dec"))
+groupA <- df %>% filter(year == "2010")
+groupB <- df %>% filter(year == "2011")
+groupC <- df %>% filter(year == "2012")
+groupD <- df %>% filter(year == "2013")
+groupE <- df %>% filter(year == "2014")
+groupF <- df %>% filter(year == "2015")
+groupG <- df %>% filter(year == "2016")
+groupH <- df %>% filter(year == "2017")
+gBarChart <- data.frame(Month = names(table(groupA$month)),
+                        countA = groupA$count,
+                        countB = groupB$count,
+                        countC = groupC$count,
+                        countD = groupD$count,
+                        countE = groupE$count,
+                        countF = groupF$count,
+                        countG = groupG$count,
+                        countH = groupH$count)
+
+p3 <- plot_ly(gBarChart,
+              x = ~Month,
+              y = ~countA,
+              type = "bar",
+              name = "2010") %>% 
+  add_trace(y = ~countB,
+            name = "2011") %>% 
+  add_trace(y = ~countC,
+            name = "2012") %>% 
+  add_trace(y = ~countD,
+            name = "2013") %>% 
+  add_trace(y = ~countE,
+            name = "2014") %>% 
+  add_trace(y = ~countF,
+            name = "2015") %>% 
+  add_trace(y = ~countG,
+            name = "2016") %>% 
+  add_trace(y = ~countH,
+            name = "2017") %>% 
+  layout(title='Dengue incidence cases from year 2010 to 2017 in Colombo District', xaxis = xform, yaxis = list(title = "Dengue Count"),barmode = "group")
+p3
+```
+
+
+
+
